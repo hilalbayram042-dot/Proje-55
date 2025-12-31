@@ -76,19 +76,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Simulate payment processing delay
         setTimeout(() => {
-            // The PNR is already generated in seat-selection.js
+            // The PNR is already generated in a previous step
             console.log('Payment successful! PNR:', bookingDetails.pnr);
             
             // Mark payment as complete in session storage
             sessionStorage.setItem('paymentComplete', 'true');
 
-            // Associate the ticket with the logged-in user
+            // --- Associate ticket with logged-in user ---
+            // Get the logged-in user's email from session storage.
             const loggedInUserEmail = sessionStorage.getItem('loggedInUserEmail');
+            
+            // If a user is logged in, add their email to the booking details.
+            // This is crucial for showing the user their own tickets later.
             if (loggedInUserEmail) {
-                bookingDetails.purchaserEmail = loggedInUserEmail;
+                bookingDetails.userEmail = loggedInUserEmail;
             }
 
-            // Save the finalized ticket to a more persistent storage
+            // Save the finalized ticket to localStorage.
+            // Tickets are stored in an array called 'purchasedTickets'.
             let purchasedTickets = JSON.parse(localStorage.getItem('purchasedTickets')) || [];
             purchasedTickets.push(bookingDetails);
             localStorage.setItem('purchasedTickets', JSON.stringify(purchasedTickets));

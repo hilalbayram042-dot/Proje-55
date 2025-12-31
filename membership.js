@@ -26,8 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     seatClass: 'Ekonomi',
                     selectedSeats: ['15A'],
                     finalPrice: 850.00,
-                    purchaserEmail: 'meltemkoran049@gmail.com',
-                    associatedUserEmail: 'meltemkoran049@gmail.com',
+                    userEmail: 'meltemkoran049@gmail.com',
                     passengers: [
                         { name: 'Meltem', surname: 'Koran', tc: '11111111111', isChild: false }
                     ]
@@ -44,8 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     seatClass: 'Business',
                     selectedSeats: ['2B'],
                     finalPrice: 1800.00,
-                    purchaserEmail: 'meltemkoran049@gmail.com',
-                    associatedUserEmail: 'meltemkoran049@gmail.com',
+                    userEmail: 'meltemkoran049@gmail.com',
                     passengers: [
                         { name: 'Meltem', surname: 'Koran', tc: '11111111111', isChild: false }
                     ]
@@ -149,25 +147,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Functions ---
 
-        function renderPurchasedTickets() {
+    function renderPurchasedTickets() {
+        // Retrieve all purchased tickets from localStorage.
         const allTickets = JSON.parse(localStorage.getItem('purchasedTickets')) || [];
+        // Get the currently logged-in user's email from sessionStorage.
         const loggedInUserEmail = sessionStorage.getItem('loggedInUserEmail');
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        // Security Check: If no user is logged in, show a message and stop.
         if (!loggedInUserEmail) {
             ticketListDiv.innerHTML = '<p data-translate="login_to_see_tickets">Biletlerinizi görmek için lütfen giriş yapın.</p>';
             return;
         }
 
-        // Filter tickets for the logged-in user
-        const userTickets = allTickets.filter(ticket => {
-            return ticket.purchaserEmail === loggedInUserEmail || (ticket.associatedUserEmail && ticket.associatedUserEmail === loggedInUserEmail);
-        });
+        // Filter the tickets to get only those belonging to the logged-in user.
+        const userTickets = allTickets.filter(ticket => ticket.userEmail === loggedInUserEmail);
 
+        // Check if the user has any tickets to display.
         if (userTickets.length > 0) {
-            ticketListDiv.innerHTML = ''; // Clear "No tickets found" message
+            ticketListDiv.innerHTML = ''; // Clear any previous message.
 
+            // Loop through each of the user's tickets and create the HTML to display it.
             userTickets.forEach((bookingDetails) => {
                 const ticketDate = new Date(bookingDetails.departureDate);
                 const isExpired = ticketDate < today;
@@ -178,12 +179,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     ticketItem.classList.add('expired-ticket');
                 }
 
-                let actionHtml = '';
-                if (!isExpired) {
-                    actionHtml = `<button class="cancel-ticket-btn" data-pnr="${bookingDetails.pnr}">Bileti İptal Et</button>`;
-                } else {
-                    actionHtml = `<p class="expired-ticket-message">Bu biletin tarihi geçmiştir.</p>`;
-                }
+                // Show "Cancel Ticket" button only for future flights.
+                let actionHtml = !isExpired
+                    ? `<button class="cancel-ticket-btn" data-pnr="${bookingDetails.pnr}">Bileti İptal Et</button>`
+                    : `<p class="expired-ticket-message">Bu biletin tarihi geçmiştir.</p>`;
                 
                 let specialNote = '';
                 if (bookingDetails.isChildTicket) {
@@ -193,10 +192,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
+                // Ensure 'from' and 'to' are displayed correctly, with fallbacks.
                 const from = bookingDetails.departureCity || 'Bilinmiyor';
                 const to = bookingDetails.arrivalCity || 'Bilinmiyor';
 
-
+                // Construct the HTML for the ticket.
                 ticketItem.innerHTML = `
                     ${specialNote}
                     <h3>Uçuş Numarası: ${bookingDetails.flightNumber} (PNR: ${bookingDetails.pnr})</h3>
@@ -217,6 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ticketListDiv.appendChild(ticketItem);
             });
         } else {
+            // If the user has no tickets, display a message.
             ticketListDiv.innerHTML = '<p data-translate="no_purchased_tickets">Henüz satın alınmış biletiniz bulunmamaktadır.</p>';
         }
     }
