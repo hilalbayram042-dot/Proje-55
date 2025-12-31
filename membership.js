@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Functions ---
 
-    function renderPurchasedTickets() {
+        function renderPurchasedTickets() {
         const allTickets = JSON.parse(localStorage.getItem('purchasedTickets')) || [];
         const loggedInUserEmail = sessionStorage.getItem('loggedInUserEmail');
         const today = new Date();
@@ -193,11 +193,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
+                const from = bookingDetails.departureCity || 'Bilinmiyor';
+                const to = bookingDetails.arrivalCity || 'Bilinmiyor';
+
 
                 ticketItem.innerHTML = `
                     ${specialNote}
                     <h3>Uçuş Numarası: ${bookingDetails.flightNumber} (PNR: ${bookingDetails.pnr})</h3>
                     <p>Havayolu: ${bookingDetails.airline}</p>
+                    <p><b>Güzergah: ${from} -> ${to}</b></p>
                     <p>Kalkış: ${bookingDetails.departureTime} - Varış: ${bookingDetails.arrivalTime}</p>
                     <p>Kalkış Tarihi: ${bookingDetails.departureDate}</p>
                     <p>Sınıf: ${bookingDetails.seatClass}</p>
@@ -220,6 +224,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleCancelTicket(pnr, isAdmin = false) {
         if (confirm('Bu bileti iptal etmek istediğinizden emin misiniz?')) {
             let purchasedTickets = JSON.parse(localStorage.getItem('purchasedTickets')) || [];
+            const ticketToCancel = purchasedTickets.find(ticket => String(ticket.pnr) === String(pnr));
+
+            if (!ticketToCancel) {
+                alert('İptal edilecek bilet bulunamadı.');
+                return;
+            }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const ticketDate = new Date(ticketToCancel.departureDate);
+            ticketDate.setHours(0, 0, 0, 0); // Normalize to compare just dates
+
+            if (ticketDate < today) {
+                alert('Bu biletin tarihi geçmiş olduğu için iptal edilemez.');
+                return;
+            }
+
             purchasedTickets = purchasedTickets.filter(ticket => String(ticket.pnr) !== String(pnr));
             localStorage.setItem('purchasedTickets', JSON.stringify(purchasedTickets));
             
