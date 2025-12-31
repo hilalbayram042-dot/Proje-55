@@ -54,11 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <h2>Uçuş Bilgileri</h2>
             <div class="summary-item">
                 <strong>Nereden:</strong>
-                <span>${bookingDetails.from}</span>
+                <span>${bookingDetails.departureCity || 'N/A'}</span>
             </div>
             <div class="summary-item">
                 <strong>Nereye:</strong>
-                <span>${bookingDetails.to}</span>
+                <span>${bookingDetails.arrivalCity || 'N/A'}</span>
             </div>
             <div class="summary-item">
                 <strong>Tarih:</strong>

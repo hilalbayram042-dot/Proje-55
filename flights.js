@@ -82,7 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const children = 0; // The modal doesn't have a children input, so default to 0
 
         const bookingDetails = {
-            ...currentFlightData,
+            departureCity: currentFlightData.from, // Changed from 'from'
+            arrivalCity: currentFlightData.to,     // Changed from 'to'
+            departureDate: currentFlightData.departureDate,
+            departureTime: currentFlightData.departureTime,
             finalPrice: finalPrice,
             airline: 'Bilinmeyen Havayolu',
             flightNumber: 'Bilinmiyor',

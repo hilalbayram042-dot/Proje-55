@@ -299,9 +299,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (selectedFlight && selectedSeats.length === totalPassengers) {
             const totalCost = selectedFlight.basePrice * selectedSeats.length;
+            const generatePNR = () => {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let result = '';
+                for (let i = 0; i < 6; i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return result;
+            };
+
             const bookingDetails = {
                 ...searchCriteria,
                 ...selectedFlight,
+                pnr: generatePNR(), // Generate PNR here
+                departureCity: searchCriteria.from, // Map 'from' to 'departureCity'
+                arrivalCity: searchCriteria.to,     // Map 'to' to 'arrivalCity'
                 selectedSeats: selectedSeats,
                 finalPrice: totalCost,
                 fromReservation: true // This is from the reservation flow

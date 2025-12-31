@@ -242,6 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (allTickets.length > 0) {
             allTicketsListDiv.innerHTML = ''; // Clear previous content
             allTickets.forEach(ticket => {
+                console.log('Ticket object in renderAdminPanel:', ticket); // Added for debugging
                 const ticketCard = document.createElement('div');
                 ticketCard.classList.add('admin-ticket-card');
 
