@@ -155,9 +155,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        if (!loggedInUserEmail) {
+            ticketListDiv.innerHTML = '<p data-translate="login_to_see_tickets">Biletlerinizi görmek için lütfen giriş yapın.</p>';
+            return;
+        }
+
         // Filter tickets for the logged-in user
         const userTickets = allTickets.filter(ticket => {
-            return ticket.purchaserEmail === loggedInUserEmail || ticket.associatedUserEmail === loggedInUserEmail;
+            return ticket.purchaserEmail === loggedInUserEmail || (ticket.associatedUserEmail && ticket.associatedUserEmail === loggedInUserEmail);
         });
 
         if (userTickets.length > 0) {
@@ -242,7 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (allTickets.length > 0) {
             allTicketsListDiv.innerHTML = ''; // Clear previous content
             allTickets.forEach(ticket => {
-                console.log('Ticket object in renderAdminPanel:', ticket); // Added for debugging
                 const ticketCard = document.createElement('div');
                 ticketCard.classList.add('admin-ticket-card');
 
