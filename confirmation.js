@@ -30,8 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         <div class="ticket-summary" style="border: 1px solid #ccc; padding: 15px; margin-top: 20px; border-radius: 5px;">
             <h4 style="margin-top: 0;">Bilet Özeti</h4>
-            <p><strong>Nereden:</strong> ${bookingDetails.from}</p>
-            <p><strong>Nereye:</strong> ${bookingDetails.to}</p>
+            <p><strong>Nereden:</strong> ${bookingDetails.departureCity}</p>
+            <p><strong>Nereye:</strong> ${bookingDetails.arrivalCity}</p>
             <p><strong>Gidiş Tarihi:</strong> ${bookingDetails.departureDate}</p>
             ${bookingDetails.isRoundTrip ? `<p><strong>Dönüş Tarihi:</strong> ${bookingDetails.returnDate}</p>` : ''}
             <p><strong>Yolcular:</strong> ${passengerNames}</p>
@@ -62,8 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ${pnrLine}
         <div class="ticket-summary" style="border: 1px solid #ccc; padding: 15px; margin-top: 20px; border-radius: 5px;">
             <h4 style="margin-top: 0;">Bilet Özeti</h4>
-            <p><strong>Nereden:</strong> ${bookingDetails.from}</p>
-            <p><strong>Nereye:</strong> ${bookingDetails.to}</p>
+            <p><strong>Nereden:</strong> ${bookingDetails.departureCity}</p>
+            <p><strong>Nereye:</strong> ${bookingDetails.arrivalCity}</p>
             <p><strong>Gidiş Tarihi:</strong> ${bookingDetails.departureDate}</p>
             ${bookingDetails.isRoundTrip ? `<p><strong>Dönüş Tarihi:</strong> ${bookingDetails.returnDate}</p>` : ''}
             <p><strong>Yolcular:</strong> ${passengerNames}</p>

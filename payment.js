@@ -98,8 +98,10 @@ document.addEventListener('DOMContentLoaded', () => {
             purchasedTickets.push(bookingDetails);
             localStorage.setItem('purchasedTickets', JSON.stringify(purchasedTickets));
 
-            // Redirect to the confirmation page
-            window.location.href = 'confirmation.html';
+            // Introduce a brief delay before redirecting to allow storage to settle.
+            setTimeout(() => {
+                window.location.href = 'confirmation.html';
+            }, 50);
         }, 2000); // 2-second delay
     });
 });

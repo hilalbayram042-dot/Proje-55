@@ -435,6 +435,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Listen for storage changes to sync tabs
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'purchasedTickets') {
+            renderPage();
+        }
+    });
+
     // Initial render when page loads
     renderPage();
 });
