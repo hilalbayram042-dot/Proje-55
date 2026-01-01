@@ -121,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (ticket.status === 'canceled') {
                     statusHtml = `<p style="color: red; font-weight: bold;">BİLET İPTAL EDİLDİ</p>`;
                 }
+                
 
                 // Dikey hizalama için basitleştirilmiş HTML yapısı
                 ticketCard.innerHTML = `
@@ -133,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p><strong>Tutar:</strong> ${ticket.finalPrice.toFixed(2)} TL</p>
                     <p><strong>Yolcular:</strong></p>
                     <ul>${passengersHtml}</ul>
+                    
                 `;
                 allTicketsListDiv.appendChild(ticketCard);
             });
