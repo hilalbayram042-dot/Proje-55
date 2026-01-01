@@ -833,8 +833,9 @@ button[type="submit"]:hover {
 }
 
 /* New Admin Panel Ticket Card Styles */
+/* New Admin Panel Ticket Card Styles */
 .admin-ticket-card {
-    background-color: #253150; /* Same as passenger-form */
+    background-color: #253150;
     border: 1px solid #005a87;
     border-radius: 8px;
     padding: 20px;
@@ -842,54 +843,30 @@ button[type="submit"]:hover {
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-.admin-ticket-card .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #005a87;
-    padding-bottom: 15px;
-    margin-bottom: 15px;
-}
-
-.admin-ticket-card .card-header strong {
-    font-size: 1.1em;
-    color: #00bfff; /* Deep Sky Blue */
-}
-
-.admin-ticket-card .card-header span {
-    font-size: 1.1em;
-    font-weight: bold;
-    color: #4CAF50; /* Green for price */
-}
-
-.admin-ticket-card .card-body {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.admin-ticket-card .card-section {
-    flex: 1 1 250px; /* Flex-grow, flex-shrink, basis */
-}
-
-.admin-ticket-card .card-section strong {
-    display: block;
-    color: #C0C0C0; /* Silver */
-    margin-bottom: 8px;
-    border-bottom: 1px solid #333e5b;
-    padding-bottom: 5px;
-}
-
-.admin-ticket-card .card-section p,
-.admin-ticket-card .card-section ul {
-    margin: 0;
-    padding: 0;
+.admin-ticket-card p {
+    margin: 10px 0;
+    line-height: 1.5;
     font-size: 0.95em;
-    color: #EAEAEA;
-    list-style: none;
 }
 
-.admin-ticket-card .card-section ul li {
+.admin-ticket-card p strong {
+    color: #00bfff; /* Deep Sky Blue for labels */
+    display: inline-block;
+    min-width: 180px; /* Etiketler için hizalama sağlar */
+}
+
+.admin-ticket-card hr {
+    border: none;
+    border-top: 1px solid #005a87;
+    margin: 15px 0;
+}
+
+.admin-ticket-card ul {
+    list-style-position: inside;
+    padding-left: 20px;
+    margin: 10px 0 0 0;
+}
+.admin-ticket-card li {
     margin-bottom: 5px;
 }
 

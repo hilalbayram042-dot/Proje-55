@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (userTickets.length > 0) {
             const today = new Date();
-            today.setHours(0, 0, 0, 0); // Saat, dakika ve saniyeyi sıfırla
+            today.setHours(0, 0, 0, 0);
 
             userTickets.forEach(ticket => {
                 const ticketElement = document.createElement('div');
@@ -61,12 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const ticketDate = new Date(ticket.departureDate);
                 const isExpired = ticketDate < today;
 
-                let actionButtonHtml = '';
-                if (isExpired) {
-                    actionButtonHtml = `<p class="expired-ticket-info">Bu biletin tarihi geçmiştir.</p>`;
-                } else {
-                    actionButtonHtml = `<button class="cancel-ticket-btn" data-pnr="${ticket.pnr}">Bileti İptal Et</button>`;
-                }
+                let actionButtonHtml = isExpired 
+                    ? `<p class="expired-ticket-info">Bu biletin tarihi geçmiştir.</p>`
+                    : `<button class="cancel-ticket-btn" data-pnr="${ticket.pnr}">Bileti İptal Et</button>`;
 
                 const passengersHtml = ticket.passengers.map(p => `<p><strong>Yolcu:</strong> ${p.name} ${p.surname}</p>`).join('');
 
@@ -77,14 +74,52 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p><strong>Kalkış / Varış Saatleri:</strong> ${ticket.departureTime} / ${ticket.arrivalTime}</p>
                     <p><strong>Koltuklar:</strong> ${ticket.selectedSeats.join(', ')}</p>
                     ${passengersHtml}
-                    <div class="ticket-action">
-                        ${actionButtonHtml}
-                    </div>
+                    <div class="ticket-action">${actionButtonHtml}</div>
                 `;
                 ticketListDiv.appendChild(ticketElement);
             });
         } else {
             ticketListDiv.innerHTML = '<p>Henüz satın alınmış biletiniz bulunmamaktadır.</p>';
+        }
+    }
+
+    /**
+     * Admin paneli için tüm satılan biletleri listeler.
+     */
+    function renderAdminPanel() {
+        const allTicketsListDiv = document.getElementById('all-tickets-list');
+        const adminStatsDiv = document.getElementById('admin-stats');
+        const allTickets = JSON.parse(localStorage.getItem('purchasedTickets')) || [];
+
+        allTicketsListDiv.innerHTML = ''; // Önceki listeyi temizle
+
+        if (allTickets.length > 0) {
+            // Toplam kazancı hesapla ve göster
+            const totalRevenue = allTickets.reduce((sum, ticket) => sum + ticket.finalPrice, 0);
+            adminStatsDiv.innerHTML = `<h4>Toplam Kazanç: ${totalRevenue.toFixed(2)} TL</h4><p>Toplam Satılan Bilet: ${allTickets.length}</p>`;
+
+            allTickets.forEach(ticket => {
+                const ticketCard = document.createElement('div');
+                ticketCard.classList.add('admin-ticket-card'); // Admin için stil sınıfı
+                
+                const passengersHtml = ticket.passengers.map(p => `<li>${p.name} ${p.surname}</li>`).join('');
+
+                // Dikey hizalama için basitleştirilmiş HTML yapısı
+                ticketCard.innerHTML = `
+                    <p class="admin-pnr"><strong>PNR:</strong> ${ticket.pnr}</p>
+                    <p><strong>Güzergah:</strong> ${ticket.departureCity} -> ${ticket.arrivalCity}</p>
+                    <p><strong>Gidiş Tarihi:</strong> ${ticket.departureDate}</p>
+                    <p><strong>Kalkış / Varış Saatleri:</strong> ${ticket.departureTime} - ${ticket.arrivalTime}</p>
+                    <p><strong>Koltuklar:</strong> ${ticket.selectedSeats.join(', ')}</p>
+                    <p><strong>Tutar:</strong> ${ticket.finalPrice.toFixed(2)} TL</p>
+                    <p><strong>Yolcular:</strong></p>
+                    <ul>${passengersHtml}</ul>
+                `;
+                allTicketsListDiv.appendChild(ticketCard);
+            });
+        } else {
+            adminStatsDiv.innerHTML = '';
+            allTicketsListDiv.innerHTML = '<p>Sistemde hiç satılmış bilet bulunmamaktadır.</p>';
         }
     }
 
@@ -103,10 +138,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (userRole === 'admin') {
                 myTicketsSection.style.display = 'none';
                 adminSection.style.display = 'block';
+                renderAdminPanel(); // Admin ise admin panelini göster
             } else {
                 myTicketsSection.style.display = 'block';
                 adminSection.style.display = 'none';
-                renderPurchasedTickets();
+                renderPurchasedTickets(); // Normal kullanıcı ise kendi biletlerini göster
             }
         } else {
             // ... (giriş yapılmamış durum)

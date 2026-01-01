@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
     paymentSummary.innerHTML = `
         <h3>Ödeme Özeti</h3>
         <p><strong>Uçuş:</strong> ${bookingDetails.airline} - ${bookingDetails.flightNumber}</p>
+        <p><strong>Güzergah:</strong> ${bookingDetails.departureCity} -> ${bookingDetails.arrivalCity}</p>
+        <p><strong>Tarih:</strong> ${bookingDetails.departureDate}</p>
+        <p><strong>Kalkış / Varış Saatleri:</strong> ${bookingDetails.departureTime} - ${bookingDetails.arrivalTime}</p>
         <p><strong>Sınıf:</strong> ${bookingDetails.seatClass}</p>
         <p><strong>Koltuklar:</strong> ${bookingDetails.selectedSeats.join(', ')}</p>
         <p class="total-amount"><strong>Toplam Tutar:</strong> ${bookingDetails.finalPrice.toFixed(2)} TL</p>
