@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     seatClass: 'Ekonomi',
                     selectedSeats: ['15A'],
                     finalPrice: 850.00,
-                    userEmail: 'meltemkoran049@gmail.com',
+                    purchaserEmail: 'meltemkoran049@gmail.com',
                     passengers: [
                         { name: 'Meltem', surname: 'Koran', tc: '11111111111', isChild: false }
                     ]
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     seatClass: 'Business',
                     selectedSeats: ['2B'],
                     finalPrice: 1800.00,
-                    userEmail: 'meltemkoran049@gmail.com',
+                    purchaserEmail: 'meltemkoran049@gmail.com',
                     passengers: [
                         { name: 'Meltem', surname: 'Koran', tc: '11111111111', isChild: false }
                     ]
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Filter the tickets to get only those belonging to the logged-in user.
-        const userTickets = allTickets.filter(ticket => ticket.userEmail === loggedInUserEmail);
+        const userTickets = allTickets.filter(ticket => ticket.purchaserEmail === loggedInUserEmail);
 
         // Check if the user has any tickets to display.
         if (userTickets.length > 0) {
@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="card-section">
                             <strong>İletişim</strong>
-                            <p>${ticket.purchaserEmail || 'N/A'}</p>
+                            <p class="contact-email">${ticket.purchaserEmail || 'Bilinmiyor'}</p>
                         </div>
                     </div>
                 `;
