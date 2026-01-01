@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Dikey hizalama için basitleştirilmiş HTML yapısı
                 ticketCard.innerHTML = `
-                    <p class="admin-pnr"><strong>PNR:</strong> ${ticket.pnr}</p>
+                    <p class="admin-pnr" style="font-size: 1.2em; color: #00bfff;"><strong>PNR:</strong> ${ticket.pnr}</p>
                     <p><strong>Güzergah:</strong> ${ticket.departureCity} -> ${ticket.arrivalCity}</p>
                     <p><strong>Gidiş Tarihi:</strong> ${ticket.departureDate}</p>
                     <p><strong>Kalkış / Varış Saatleri:</strong> ${ticket.departureTime} - ${ticket.arrivalTime}</p>
