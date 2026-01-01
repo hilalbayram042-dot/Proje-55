@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const paymentSummary = document.getElementById('payment-summary');
     const payBtn = document.getElementById('pay-btn');
@@ -7,16 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const expiryDateInput = document.getElementById('expiry-date');
     const cvcInput = document.getElementById('cvc');
 
-    // Retrieve booking data from sessionStorage
     const bookingDetails = JSON.parse(sessionStorage.getItem('bookingDetails'));
 
-    // If no data, redirect back to the main page
     if (!bookingDetails) {
         window.location.href = 'index.html';
         return;
     }
 
-    // Display payment summary
     paymentSummary.innerHTML = `
         <h3>Ödeme Özeti</h3>
         <p><strong>Uçuş:</strong> ${bookingDetails.airline} - ${bookingDetails.flightNumber}</p>
@@ -25,33 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
         <p class="total-amount"><strong>Toplam Tutar:</strong> ${bookingDetails.finalPrice.toFixed(2)} TL</p>
     `;
 
-    // Handle payment button click
     payBtn.addEventListener('click', () => {
         const cardName = cardNameInput.value.trim();
         const cardNumber = cardNumberInput.value.replace(/\s/g, '');
         const expiryDate = expiryDateInput.value.replace('/', '');
         const cvc = cvcInput.value;
 
-        if (!cardName) {
-            alert('Lütfen kart üzerindeki ismi girin.');
-            return;
-        }
-
-        // Card Number validation
-        if (!/^\d{16}$/.test(cardNumber)) {
-            alert('Kart numarası tam olarak 16 rakamdan oluşmalıdır.');
-            return;
-        }
-
-        // CVC validation
-        if (!/^\d{3}$/.test(cvc)) {
-            alert('CVC kodu tam olarak 3 rakamdan oluşmalıdır.');
-            return;
-        }
-
-        // Expiry Date validation
-        if (!/^\d{4}$/.test(expiryDate)) {
-            alert('Son kullanma tarihi AA/YY formatında 4 rakam olmalıdır (örn: 0528).');
+        if (!cardName || !/^\d{16}$/.test(cardNumber) || !/^\d{3}$/.test(cvc) || !/^\d{4}$/.test(expiryDate)) {
+            alert('Lütfen kart bilgilerinizi eksiksiz ve doğru formatta girin.');
             return;
         }
 
@@ -60,47 +37,45 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentYear = new Date().getFullYear() % 100;
         const currentMonth = new Date().getMonth() + 1;
 
-        if (month < 1 || month > 12) {
-            alert('Geçersiz ay. Ay 01 ile 12 arasında olmalıdır.');
+        if (month < 1 || month > 12 || (year < currentYear || (year === currentYear && month < currentMonth))) {
+            alert('Kartınızın son kullanma tarihi geçersiz veya geçmiş.');
             return;
         }
 
-        if (year < currentYear || (year === currentYear && month < currentMonth)) {
-            alert('Kartınızın son kullanma tarihi geçmiş.');
-            return;
-        }
-
-        // Disable button to prevent multiple clicks
         payBtn.disabled = true;
         payBtn.textContent = 'Ödeme İşleniyor...';
 
-        // Simulate payment processing delay
         setTimeout(() => {
-            // The PNR is already generated in a previous step
-            console.log('Payment successful! PNR:', bookingDetails.pnr);
-            
-            // Mark payment as complete in session storage
-            sessionStorage.setItem('paymentComplete', 'true');
-
-            // --- Associate ticket with logged-in user ---
-            // Get the logged-in user's email from session storage.
+            // 1. Oturumdan giriş yapmış kullanıcının e-postasını al
             const loggedInUserEmail = sessionStorage.getItem('loggedInUserEmail');
             
-            // If a user is logged in, add their email to the booking details.
+            // 2. Bilet objesine 'ownerEmail' anahtarını ekle
+            // Giriş yapmış bir kullanıcı varsa, e-postasını bilet detaylarına ekle
             if (loggedInUserEmail) {
                 bookingDetails.ownerEmail = loggedInUserEmail;
+            } else {
+                // Eğer bir sebepten kullanıcı girişi yoksa, işlemi durdur veya misafir olarak işaretle
+                // Bu senaryoda misafir kullanıcıların biletlerini görmesi beklenmediği için null bırakabiliriz.
+                bookingDetails.ownerEmail = null; 
             }
 
-            // Save the finalized ticket to localStorage.
-            // Tickets are stored in an array called 'purchasedTickets'.
+            // 3. Mevcut biletleri localStorage'dan çek, yoksa boş bir dizi oluştur
             let purchasedTickets = JSON.parse(localStorage.getItem('purchasedTickets')) || [];
+            
+            // 4. Yeni bileti dizinin sonuna ekle
             purchasedTickets.push(bookingDetails);
+            
+            // 5. Güncellenmiş bilet dizisini localStorage'a geri kaydet
             localStorage.setItem('purchasedTickets', JSON.stringify(purchasedTickets));
+            
+            // Ödemenin tamamlandığını oturumda işaretle
+            sessionStorage.setItem('paymentComplete', 'true');
 
-            // Introduce a brief delay before redirecting to allow storage to settle.
-            setTimeout(() => {
-                window.location.href = 'confirmation.html';
-            }, 50);
-        }, 2000); // 2-second delay
+            console.log('Ödeme başarılı! Bilet', bookingDetails.pnr, 'sahibi', loggedInUserEmail, 'ile kalıcı olarak kaydedildi.');
+
+            // 6. Onay sayfasına yönlendir
+            window.location.href = 'confirmation.html';
+
+        }, 1500); // Simülasyon gecikmesi
     });
 });
