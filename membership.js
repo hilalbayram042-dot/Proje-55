@@ -61,9 +61,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const ticketDate = new Date(ticket.departureDate);
                 const isExpired = ticketDate < today;
 
-                let actionButtonHtml = isExpired 
-                    ? `<p class="expired-ticket-info">Bu biletin tarihi geçmiştir.</p>`
-                    : `<button class="cancel-ticket-btn" data-pnr="${ticket.pnr}">Bileti İptal Et</button>`;
+                let actionButtonHtml = '';
+                if (ticket.status === 'canceled') {
+                    actionButtonHtml = `<p style="color: red;">Bu bilet iptal edilmiştir.</p>`;
+                    ticketElement.style.opacity = '0.5';
+                } else if (isExpired) {
+                    actionButtonHtml = `<p class="expired-ticket-info">Bu biletin tarihi geçmiştir.</p>`;
+                } else {
+                    actionButtonHtml = `<button class="cancel-ticket-btn" data-pnr="${ticket.pnr}">Bileti İptal Et</button>`;
+                }
+
 
                 const passengersHtml = ticket.passengers.map(p => `<p><strong>Yolcu:</strong> ${p.name} ${p.surname}</p>`).join('');
 
@@ -94,18 +101,30 @@ document.addEventListener('DOMContentLoaded', () => {
         allTicketsListDiv.innerHTML = ''; // Önceki listeyi temizle
 
         if (allTickets.length > 0) {
-            // Toplam kazancı hesapla ve göster
-            const totalRevenue = allTickets.reduce((sum, ticket) => sum + ticket.finalPrice, 0);
-            adminStatsDiv.innerHTML = `<h4>Toplam Kazanç: ${totalRevenue.toFixed(2)} TL</h4><p>Toplam Satılan Bilet: ${allTickets.length}</p>`;
+            const activeTickets = allTickets.filter(ticket => ticket.status !== 'canceled');
+            const totalRevenue = activeTickets.reduce((sum, ticket) => sum + ticket.finalPrice, 0);
+            const totalSold = allTickets.length;
+            const totalCanceled = allTickets.length - activeTickets.length;
+
+            adminStatsDiv.innerHTML = `<h4>Toplam Kazanç: ${totalRevenue.toFixed(2)} TL</h4><p>Toplam Satılan Bilet: ${totalSold}</p><p>İptal Edilen Bilet: ${totalCanceled}</p>`;
 
             allTickets.forEach(ticket => {
                 const ticketCard = document.createElement('div');
                 ticketCard.classList.add('admin-ticket-card'); // Admin için stil sınıfı
+                if (ticket.status === 'canceled') {
+                    ticketCard.style.opacity = '0.5'; // Visually indicate cancellation
+                }
                 
                 const passengersHtml = ticket.passengers.map(p => `<li>${p.name} ${p.surname}</li>`).join('');
 
+                let statusHtml = '';
+                if (ticket.status === 'canceled') {
+                    statusHtml = `<p style="color: red; font-weight: bold;">BİLET İPTAL EDİLDİ</p>`;
+                }
+
                 // Dikey hizalama için basitleştirilmiş HTML yapısı
                 ticketCard.innerHTML = `
+                    ${statusHtml}
                     <p class="admin-pnr" style="font-size: 1.2em; color: #00bfff;"><strong>PNR:</strong> ${ticket.pnr}</p>
                     <p><strong>Güzergah:</strong> ${ticket.departureCity} -> ${ticket.arrivalCity}</p>
                     <p><strong>Gidiş Tarihi:</strong> ${ticket.departureDate}</p>
@@ -203,11 +222,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleCancelTicket(pnr) {
         if (confirm(`PNR numaralı: ${pnr} bileti iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`)) {
             let allTickets = JSON.parse(localStorage.getItem('purchasedTickets')) || [];
-            const updatedTickets = allTickets.filter(ticket => ticket.pnr !== pnr);
-            
-            localStorage.setItem('purchasedTickets', JSON.stringify(updatedTickets));
-            alert('Bilet başarıyla iptal edildi.');
-            renderPurchasedTickets(); // Listeyi yenile
+            const ticketIndex = allTickets.findIndex(ticket => ticket.pnr === pnr);
+
+            if (ticketIndex > -1) {
+                allTickets[ticketIndex].status = 'canceled'; // Add a status
+                localStorage.setItem('purchasedTickets', JSON.stringify(allTickets));
+                alert('Bilet başarıyla iptal edildi.');
+                renderPage(); // Re-render the whole page to update admin or user view
+            } else {
+                alert('İptal edilecek bilet bulunamadı.');
+            }
         }
     }
 
@@ -215,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) loginForm.addEventListener('submit', handleLogin);
     if (registerForm) registerForm.addEventListener('submit', handleRegister);
     if (logoutButton) logoutButton.addEventListener('click', handleLogout);
+
 
     if (showRegisterFormLink) { /* ... */ }
     if (showLoginFormLink) { /* ... */ }
