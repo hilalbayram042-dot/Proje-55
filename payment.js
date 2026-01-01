@@ -87,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const loggedInUserEmail = sessionStorage.getItem('loggedInUserEmail');
             
             // If a user is logged in, add their email to the booking details.
-            // This is crucial for showing the user their own tickets later.
             if (loggedInUserEmail) {
                 bookingDetails.ownerEmail = loggedInUserEmail;
             }
