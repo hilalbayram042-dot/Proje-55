@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // If a user is logged in, add their email to the booking details.
             // This is crucial for showing the user their own tickets later.
             if (loggedInUserEmail) {
-                bookingDetails.purchaserEmail = loggedInUserEmail;
+                bookingDetails.userEmail = loggedInUserEmail;
             }
 
             // Save the finalized ticket to localStorage.
